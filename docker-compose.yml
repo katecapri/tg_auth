@@ -1,0 +1,60 @@
+services:
+
+  tg-link-db:
+    env_file: .env
+    image: ${TG_LINK_DB_IMAGE_NAME}
+    ports:
+      - "5432:${TG_LINK_DB_PORT}"
+    environment:
+      POSTGRES_USER: ${TG_LINK_DB_USERNAME}
+      POSTGRES_PASSWORD: ${TG_LINK_DB_PASSWORD}
+      POSTGRES_DB: ${TG_LINK_DB_NAME}
+
+  tg_bot:
+    env_file: .env
+    image: ${TG_LINK_TG_IMAGE_NAME}
+    restart: unless-stopped
+    environment:
+      DB_USERNAME: ${TG_LINK_DB_USERNAME}
+      DB_PASSWORD: ${TG_LINK_DB_PASSWORD}
+      DB_DATABASE: ${TG_LINK_DB_NAME}
+      DB_PORT: ${TG_LINK_DB_PORT}
+      DB_HOST: ${TG_LINK_DB_HOST}
+      TELEGRAM_TOKEN: ${TG_LINK_TELEGRAM_TOKEN}
+    depends_on:
+      - tg-link-db
+
+  migrations:
+    env_file: .env
+    image: ${TG_LINK_MIGRATIONS_IMAGE_NAME}
+    environment:
+      DB_USERNAME: ${TG_LINK_DB_USERNAME}
+      DB_PASSWORD: ${TG_LINK_DB_PASSWORD}
+      DB_DATABASE: ${TG_LINK_DB_NAME}
+      DB_PORT: ${TG_LINK_DB_PORT}
+      DB_HOST: ${TG_LINK_DB_HOST}
+    depends_on:
+      - tg-link-db
+
+  site:
+    env_file: .env
+    image: ${TG_LINK_SITE_IMAGE_NAME}
+    restart: unless-stopped
+    environment:
+      DB_USERNAME: ${TG_LINK_DB_USERNAME}
+      DB_PASSWORD: ${TG_LINK_DB_PASSWORD}
+      DB_DATABASE: ${TG_LINK_DB_NAME}
+      DB_PORT: ${TG_LINK_DB_PORT}
+      DB_HOST: ${TG_LINK_DB_HOST}
+      TG_BOT_URL: ${TG_LINK_TELEGRAM_BOT_URL}
+    ports:
+      - "8000:${TG_LINK_SITE_PORT}"
+    depends_on:
+      - tg-link-db
+
+
+
+networks:
+  default:
+    name: ${TG_LINK_NETWORK}
+    external: true

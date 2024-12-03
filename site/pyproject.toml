@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "TG auth site"
+version = "1"
+description = ""
+authors = ["Kuzina Ekaterina"]
+
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Django = "^5.0"
+django-model-utils = "4.0.0"
+psycopg2 = "^2.9.9"
+pillow = "^10.0.0"
+channels = "^4"
+
+[tool.poetry.group.dev.dependencies]
+channels = { version = "^4", extras = ["daphne"] }
+
+[build-system]
+requires = ["poetry-core>=1.8.1"]
+build-backend = "poetry.core.masonry.api"
